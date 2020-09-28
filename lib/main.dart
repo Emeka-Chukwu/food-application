@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:foodApp/cubit/cartsproducts_cubit.dart';
 import 'package:foodApp/cubit/products_cubit.dart';
 import 'package:foodApp/cubit/restaurant_cubit.dart';
 import 'package:foodApp/cubit/users_cubit.dart';
+import 'package:foodApp/repositories/cartsproducts.dart';
 import 'package:foodApp/repositories/productsrepository.dart';
 import 'package:foodApp/repositories/restaurantrespository.dart';
 import 'package:foodApp/repositories/users.dart';
@@ -16,6 +18,7 @@ void main() async {
       RestaurantRespositories();
   final ProductRespositories productRespositories = ProductRespositories();
   final UserRespositories userRespositories = UserRespositories();
+  final CartRepository cartRepository = CartRepository();
 
   runApp(MultiBlocProvider(providers: [
     BlocProvider<ProductsCubit>(
@@ -28,7 +31,10 @@ void main() async {
     BlocProvider<UsersCubit>(
       create: (BuildContext context) =>
           UsersCubit(userRespositories: userRespositories),
-    )
+    ),
+    BlocProvider<CartsproductsCubit>(
+      create: (BuildContext context) => CartsproductsCubit(cartRepository),
+    ),
   ], child: App()));
 }
 

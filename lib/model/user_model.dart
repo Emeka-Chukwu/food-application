@@ -32,12 +32,17 @@ class Users {
     priceSum = snapshot.data()["cart"] == null
         ? 0
         : getTotalPrice(cart: snapshot.data()["cart"]);
-    cart = snapshot.data()["cart"] != null ? snapshot.data()["cart"] : null;
     cart = snapshot.data()["cart"] != null
         ? convertCartItems(snapshot.data()["cart"])
         : [];
+    // if (snapshot.data()["cart"] != null) {
+    //   cart = List<Cart>();
+    //   snapshot.data()["cart"].forEach((Map<String, dynamic> tojson) {
+    //     cart.add(Cart.fromMap(tojson));
+    //   });
+    // }
   }
-
+  // Map cartItem in cart)
   Map<String, dynamic> toMap() => {
         "name": this.name,
         "email": this.email,
@@ -48,7 +53,9 @@ class Users {
     if (cart == null) return 0;
 
     for (Map cartItem in cart) {
-      priceSum += cartItem["price"] * cartItem["qauntity"];
+      priceSum += ["price"] != null
+          ? int.parse(cartItem["price"])
+          : 10 * cartItem["quantity"];
     }
     return priceSum;
   }

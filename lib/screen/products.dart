@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:foodApp/cubit/cartsproducts_cubit.dart';
 import 'package:foodApp/cubit/products_cubit.dart';
 import 'package:foodApp/cubit/users_cubit.dart';
+import 'package:foodApp/model/cart_model.dart';
+// import 'package:foodApp/screen/cart_order_page.dart';
 import 'package:foodApp/screen/individual_product_view.dart';
 import 'package:foodApp/utils/utils.dart';
 // import 'package:foodApp/utils/utils.dart';
@@ -29,43 +32,64 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final productDetails = context.bloc<ProductsCubit>();
+    final productDetails = context.bloc<CartsproductsCubit>();
     final userCubit = context.bloc<UsersCubit>();
+    final cartsProducts = context.bloc<CartsproductsCubit>().state;
     // userCubit.userDetailsAssignment(context);
 
-    var cartNumber =
-        userCubit.users.cart != null ? userCubit.users.cart.length : null;
+    // var cartNumber =
+    //     userCubit.state.props != null ? userCubit.state.props[5] : null;
+    // print(cartNumber);
+    List<Cart> cartNewNumber;
+    int numberOfItem = 0;
+
+    // = userCubit.state.props[6];
+
+    if (cartsProducts is CartsproductLoaded) {
+      cartNewNumber = cartsProducts.carts;
+      for (Cart item in cartNewNumber) {
+        numberOfItem += item.quantity;
+      }
+    }
+    print("numberOfitem $numberOfItem");
+
+    print(cartNewNumber);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Text("Products"),
         actions: [
           userCubit.state is NormalUserAuthenticated
-              ? Stack(children: [
-                  IconButton(
-                      icon: Icon(
-                        Icons.shopping_cart,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onPressed: null),
-                  cartNumber != null
-                      ? Positioned(
-                          right: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4.0, vertical: 3),
-                            child: Container(
-                              height: 20,
-                              width: 25,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.red),
-                              child: Center(child: Text("$cartNumber")),
+              ? GestureDetector(
+                  onTap: () {
+                    productDetails.getUserProductsCart(context);
+                  },
+                  child: Stack(children: [
+                    IconButton(
+                        icon: Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed: null),
+                    cartNewNumber != null
+                        ? Positioned(
+                            right: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0, vertical: 3),
+                              child: Container(
+                                height: 20,
+                                width: 25,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle, color: Colors.red),
+                                child: Center(child: Text("$numberOfItem")),
+                              ),
                             ),
-                          ),
-                        )
-                      : Container(),
-                ])
+                          )
+                        : Container(),
+                  ]),
+                )
               : Container(),
         ],
       ),
@@ -102,12 +126,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
               if (state.products.length == 0) {
                 return EmptyProductsList();
               }
+
               return Padding(
                 padding: const EdgeInsets.all(1.0),
                 child: Container(
                   height: screenHeight(context, percent: .8),
                   child: GridView.builder(
-                      itemCount: state.products.length,
+                      itemCount: state.products.length ?? 0,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 2,

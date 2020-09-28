@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:foodApp/model/cart_model.dart';
 import 'package:foodApp/model/product_model.dart';
 import 'package:foodApp/repositories/productsrepository.dart';
 import 'package:foodApp/screen/products.dart';

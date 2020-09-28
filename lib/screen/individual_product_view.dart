@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:foodApp/cubit/users_cubit.dart';
+import 'package:foodApp/model/cart_model.dart';
 import 'package:foodApp/model/product_model.dart';
 import 'package:foodApp/utils/utils.dart';
 
@@ -14,6 +17,7 @@ class _IndividualProductViewState extends State<IndividualProductView> {
   var num = 1;
   @override
   Widget build(BuildContext context) {
+    final userCubit = context.bloc<UsersCubit>();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.product.name),
@@ -71,10 +75,18 @@ class _IndividualProductViewState extends State<IndividualProductView> {
             width: screenWidth(context, percent: .6),
             decoration: BoxDecoration(
                 color: Colors.green, borderRadius: BorderRadius.circular(10)),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text("ADD TO CART",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: GestureDetector(
+              onTap: () {
+                // Cart cart = Cart();
+                var cartOrder = Cart.fromMap(widget.product.toMap());
+                cartOrder.quantity = num;
+                userCubit.userRespositories.addToCart(cartOrder);
+              },
+              child: Align(
+                alignment: Alignment.center,
+                child: Text("ADD TO CART",
+                    style: TextStyle(color: Colors.white, fontSize: 18)),
+              ),
             ))
       ]),
     );

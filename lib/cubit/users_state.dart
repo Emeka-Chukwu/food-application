@@ -17,10 +17,18 @@ class UserAuthenticating extends UsersState {
 class NormalUserAuthenticated extends UsersState {
   final Users user;
   NormalUserAuthenticated(this.user);
+  // var qty = user.car
 
   @override
-  List<Object> get props =>
-      [user.name, user.email, user.imageUrl, user.id, user.stripeId];
+  List<Object> get props => [
+        user.name,
+        user.email,
+        user.imageUrl,
+        user.id,
+        user.stripeId,
+        user.cart.length,
+        user.cart
+      ];
 }
 
 class RestaurantUserAuthenticated extends UsersState {

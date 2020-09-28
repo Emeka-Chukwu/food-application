@@ -3,7 +3,7 @@ class Cart {
   String name;
   String imageUrl;
   String productId;
-  double price;
+  String price;
   int quantity;
   String restaurantId;
 
@@ -17,13 +17,14 @@ class Cart {
       this.restaurantId});
 
   Cart.fromMap(Map<String, dynamic> tojson) {
-    id = tojson["id"];
-    name = tojson["name"];
-    imageUrl = tojson["imageUrl"];
-    productId = tojson["productId"];
-    price = tojson["price"];
-    quantity = tojson["quantity"];
-    restaurantId = tojson["restaurantId"];
+    id = tojson["id"] != null ? tojson["id"] : null;
+    name = tojson["name"] != null ? tojson["name"] : null;
+    imageUrl = tojson["imageUrl"] != null ? tojson["imageUrl"] : null;
+    productId = tojson["productId"] != null ? tojson["productId"] : null;
+    price = tojson["price"] != null ? tojson["price"] : null;
+    quantity = tojson["quantity"] != null ? tojson["quantity"] : 0;
+    restaurantId =
+        tojson["restaurantId"] != null ? tojson["restaurantId"] : null;
   }
 
   Map<String, dynamic> toMap() {
@@ -34,7 +35,7 @@ class Cart {
     data["productId"] = this.productId;
     data["price"] = this.price;
     data["quantity"] = this.quantity;
-    data[restaurantId] = this.restaurantId;
+    data["restaurantId"] = this.restaurantId;
 
     return data;
   }

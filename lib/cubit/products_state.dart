@@ -35,3 +35,15 @@ class GetProductImageFrom extends ProductsState {
   final File productImage;
   GetProductImageFrom(this.productImage);
 }
+
+class ProductCartLoaded extends ProductsState {
+  final List<Cart> productsCart;
+  ProductCartLoaded({@required this.productsCart});
+
+  @override
+  List<Object> get props => [productsCart];
+}
+
+class ProductCartInitial extends ProductsState {
+  ProductCartInitial();
+}

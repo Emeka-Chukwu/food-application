@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:foodApp/model/cart_model.dart';
 import 'package:foodApp/model/restaurant_model.dart';
 import 'package:foodApp/model/user_model.dart';
 // import 'package:foodApp/utils/utils.dart';
@@ -97,35 +99,41 @@ class UserRespositories {
   // user login application logic
 
   Future<Users> loginUserAccount() async {
-    if (validatedLoginAndSaved()) {
-      User firebaseUser = (await FirebaseAuth.instance
+    if (!validatedLoginAndSaved()) return throw Exception("fill the form");
+
+    // var errorMessage;
+    User firebaseUser;
+    try {
+      firebaseUser = (await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: email, password: password))
           .user;
+    } on PlatformException catch (e) {
+      // print(e.message);
+      print(e.toString());
+      return throw PlatformException(code: e.message);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      print(e.toString());
+      print(e.toString());
 
-      print(firebaseUser.uid.toString() + "eeeeeeeeee");
-      DocumentSnapshot docs = await firestorestance
-          .collection("users")
-          .doc(firebaseUser.uid.toString())
-          .get()
-          .then((DocumentSnapshot value) {
-        print(value.data());
-        // return Users.fromSnapshot(value);
-        return value;
-      });
-      if (docs.exists) {
-        print("true");
-        print(Users.fromSnapshot(docs));
-        print("---------------------");
-        return Users.fromSnapshot(docs);
-      }
-      // print(docs);
-      // print(docs.data());
-      // print(docs.id);
-      // print(docs);
-
-      // return  Users.fromSnapshot(docs);
+      return throw FirebaseAuthException(message: e.message);
     }
-    return null;
+    print(firebaseUser.uid.toString() + "eeeeeeeeee");
+    DocumentSnapshot docs = await firestorestance
+        .collection("users")
+        .doc(firebaseUser.uid.toString())
+        .get()
+        .then((DocumentSnapshot value) {
+      print(value.data());
+      // return Users.fromSnapshot(value);
+      return value;
+    });
+    // if (docs.exists) {
+    return Users.fromSnapshot(docs);
+    // }
+    // }
+    // }
+    // return null;
   }
 
   Future logoutUserAccount() async {
@@ -279,5 +287,24 @@ class UserRespositories {
       restaurant = Restaurant.fromSnapshot(value);
     });
     return restaurant;
+  }
+
+  Future addToCart(Cart cart) async {
+    user = FirebaseAuth.instance.currentUser;
+
+    firestorestance.collection("users").doc(user.uid.toString()).update({
+      "cart": FieldValue.arrayUnion([cart.toMap()])
+    });
+  }
+
+  Future removeFromCart(Cart cart) async {
+    user = FirebaseAuth.instance.currentUser;
+    print("object");
+    print(cart.toMap());
+    await firestorestance.collection("users").doc(user.uid.toString()).update({
+      "cart": FieldValue.arrayRemove([cart.toMap()])
+    });
+    // print(check);?
+    print("object");
   }
 }

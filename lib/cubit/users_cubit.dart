@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:foodApp/model/restaurant_model.dart';
 import 'package:foodApp/model/user_model.dart';
@@ -78,15 +80,30 @@ class UsersCubit extends Cubit<UsersState> {
       final user = await userRespositories.loginUserAccount();
       emit(NormalUserAuthenticated(user));
       changeScreen(context, WelcomeAuth());
-    } on FirebaseException catch (e) {
-      if (e.code == "user-not-found") {
-        emit(UserAuthenticatedError("Wrong email"));
-      } else if (e.code == "wrong-password") {
-        emit(UserAuthenticatedError("wrong password"));
-      } else {
-        emit(UserAuthenticatedError(e.code.toString()));
-      }
+    } catch (e) {
+      print(e.toString());
+      print(e.toString());
+      print(e.toString());
+      print(e.toString());
+      print(e.toString());
+      emit(UserAuthenticatedError(e.toString()));
     }
+
+    // Future<void> loginUser(BuildContext context) async {
+    //   try {
+    //     UserAuthenticating();
+    //     final user = await userRespositories.loginUserAccount();
+    //     emit(NormalUserAuthenticated(user));
+    //     changeScreen(context, WelcomeAuth());
+    //   } on PlatformException catch (e) {
+    //     if (e.code == "user-not-found") {
+    //       emit(UserAuthenticatedError("Wrong email"));
+    //     } else if (e.code == "wrong-password") {
+    //       emit(UserAuthenticatedError("wrong password"));
+    //     } else {
+    //       emit(UserAuthenticatedError(e.code.toString()));
+    //     }
+    //   }
   }
 
   Future<void> registerRestaurantUser() async {
@@ -148,7 +165,10 @@ class UsersCubit extends Cubit<UsersState> {
       final user = await userRespositories.currentUser();
       userDetails = user;
       emit(NormalUserAuthenticated(user));
-    } on FirebaseException catch (e) {
+    } on PlatformException catch (e) {
+      print(e.message);
+      print("object");
+    } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
         emit(UserAuthenticatedError("Wrong email"));
       } else if (e.code == "wrong-password") {
@@ -156,6 +176,9 @@ class UsersCubit extends Cubit<UsersState> {
       } else {
         emit(UserAuthenticatedError(e.code.toString()));
       }
+      print(" nnnnnnnnnnnnnnnnn");
+    } catch (e) {
+      print(e.toString());
     }
   }
 
